@@ -1,17 +1,20 @@
-var state = {
+let state = {
     day: 1,
     hour: 0,
     energy: 100,
     eventSequence: [],
-    currentActivityIndex: -1 // This will represent which activity we're performing in the sequence
+    currentActivityIndex: -1
 };
+
+let activityIndex = 0;
 
 function ranOutOfStamina(){
     alert('Ran out of stamina! Game over.');
     clearInterval(loop);
-}
+};
 
-function incrementDay(){
+function incrementDay() {
+    incrementActivity();
     if(state.currentActivityIndex == state.eventSequence.length){
         state.hour = 0; 
         state.currentActivityIndex = 0;
@@ -20,14 +23,15 @@ function incrementDay(){
     }
 }
 
-function incrementHour(){
-    if(state.hour == 24){
+function incrementHour() {
+    if(state.hour == 24) {
         state.hour = 0;
     } else {
         state.hour++;
     }
     document.getElementById('hourCount').innerText = state.hour;
 }
+
 
 function manageEnergy(activity){
     if(activity.name === 'rest'){
@@ -38,46 +42,77 @@ function manageEnergy(activity){
     document.getElementById('energyCount').innerText = state.energy;
 }
 
+
 function addActivity(activity){
-    state.eventSequence.push(activity);
+    let newActivityIndex = state.eventSequence.push(activity) - 1;
+    let newActivityEl = createActivityElement(newActivityIndex, activity);
+    document.getElementById('sequenceContainer').appendChild(newActivityEl);
 }
 
-function manageTime(operator){
-    if(operator === "+"){
-        state.eventSequence[state.currentActivityIndex].duration++;
-    } else if(operator === "-"){
-        state.eventSequence[state.currentActivityIndex].duration--;
+function removeActivity(activityIndex){
+    state.eventSequence.splice(activityIndex, 1);
+    document.getElementById("sequenceContainer").removeChild(document.getElementById("activity"+activityIndex));
+}
+
+
+function createActivityElement(index, activity) {
+    let activityEl = document.createElement('div');
+    activityEl.id = "activity"+index;
+    activityEl.innerHTML =
+        activity.name + ' for ' +
+        '<span id="activityDuration'+index+'">'+activity.duration+'</span>' + ' hours ' +
+        '<button onclick="manageTime('+index+', \'-\')"> - </button>' +
+        '<button onclick="manageTime('+index+', \'+\')"> + </button>' +
+        '<button onclick="removeActivity('+index+')"> X </button>';
+    return activityEl;
+}
+
+
+function updateActivityDuration(activityIndex, newDuration) {
+    document.getElementById('activityDuration'+activityIndex).innerText = newDuration;
+}
+
+function manageTime(activityIndex, operator){
+    if(operator === "+") {
+        state.eventSequence[activityIndex].duration++;
+    } else if(operator === "-") {
+        state.eventSequence[activityIndex].duration--;
     }
+    updateActivityDuration(activityIndex, state.eventSequence[activityIndex].duration);
 }
 
-function getAndUpdateCurrentActivity(){
+function getAndUpdateCurrentActivity() {
     if(state.energy <= 0){
         ranOutOfStamina();
     }
 
-    if(state.eventSequence[state.currentActivityIndex].duration === 0){
-        state.currentActivityIndex++;
+    if(state.eventSequence[state.currentActivityIndex].duration === 0) {
         incrementDay();
         document.getElementById('currentEvent').innerText = state.eventSequence[state.currentActivityIndex].name;
     }
 
     manageEnergy(state.eventSequence[state.currentActivityIndex]);
     state.eventSequence[state.currentActivityIndex].duration--;
- }
+}
 
-function gameLoop(){
+function gameLoop() {
     incrementHour();
     getAndUpdateCurrentActivity();
 }
 
-addActivity({
-    name: 'rest',
-    duration: 6
+window.addEvent = function(event) {
+    let eventButton = document.createElement('button');
+    eventButton.innerHTML = event.name;
+    eventButton.addEventListener('click', function(){ addActivity({name: event.name, duration: 1}); });
+    document.getElementById('eventsContainer').appendChild(eventButton); // Changed from 'events' to 'eventsContainer'
+}
+
+window.addEventListener('load', function(){
+    addEvent({name: 'rest'});
+    addEvent({name: 'look around'});
 });
 
-addActivity({
-    name: 'cultivate',
-    duration: 10
-});
-
-var loop = setInterval(gameLoop, 1000);
+let loop = setInterval(function() {
+    gameLoop();
+    activityIndex = state.currentActivityIndex;
+}, 1000);

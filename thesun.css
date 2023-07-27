@@ -1,13 +1,50 @@
-#sequence {
+body {
+    font-family: Arial, sans-serif;
+}
+
+#header {
     position: absolute;
     top: 0;
     left: 0;
-    width: 25%;
-    min-height: 100%;
-    background-color: rgba(0,0,0,0.4);
+    width: 100%;
+    background-color: rgba(0,0,0,0.8);
     color: #fff;
-    padding: 1em; 
+    padding: 0.5em;
+    border-radius: 8px;
 }
-#sequenceContainer {
-    margin-top: 1em;
+
+#sequence {
+    position: absolute;
+    top: 2em;
+    left: 0;
+    width: 20%;
+    background-color: rgba(0,100,255,0.8);
+    color: #fff;
+    padding: 0.5em;
+    border-radius: 8px;
+}
+
+#events {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 60%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0,200,100,0.8);
+    color: #fff;
+    padding: 0.5em;
+    border-radius: 8px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+#footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(0,0,0,0.8);
+    color: #fff;
+    padding: 0.5em;
+    border-radius: 8px;
 }

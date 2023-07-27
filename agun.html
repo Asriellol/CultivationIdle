@@ -1,13 +1,29 @@
-<div id="sequence">
-    <h2>Day: <span id="dayCount">1</span></h2>
-    <h2>Hour: <span id="hourCount">0</span></h2>
-
-    <div id="currentEvent">Rest</div>
-    <button id="minusButton" onclick="manageTime('-')">-</button>
-    <button id="plusButton" onclick="manageTime('+')">+</button>
-
-    <div id="energy">
-        Energy: <span id="energyCount">100</span>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Wuxia/XianXia Game</title>
+    <link rel="stylesheet" type="text/css" href="thesun.css">
+</head>
+<body>
+    <div id="header">
+        <h2>Day: <span id="dayCount">1</span> | Hour: <span id="hourCount">0</span></h2>
     </div>
-</div>
-<div id="sequenceContainer"></div>
+    <div id="sequence">
+        <h3>Sequence:</h3>
+        <div id="sequenceContainer"></div>
+    </div>
+
+    <div id="events">
+        <h2>Events:</h2>
+        <div id="eventsContainer">
+            <!-- Events will be added here dynamically -->
+        </div>
+    </div>
+
+    <div id="footer">
+        <h3>Energy: <span id="energyCount">100</span></h3>
+    </div>
+
+    <script src="thousandlions.js"></script>
+</body>
+</html>
