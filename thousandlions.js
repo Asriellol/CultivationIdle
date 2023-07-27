@@ -42,53 +42,70 @@ function manageEnergy(activity){
     document.getElementById('energyCount').innerText = state.energy;
 }
 
-
-function addActivity(activity){
+function addActivity(activity) {
+    activity.duration = activity.duration || 1; 
     let newActivityIndex = state.eventSequence.push(activity) - 1;
     let newActivityEl = createActivityElement(newActivityIndex, activity);
     document.getElementById('sequenceContainer').appendChild(newActivityEl);
 }
 
-function removeActivity(activityIndex){
-    state.eventSequence.splice(activityIndex, 1);
-    document.getElementById("sequenceContainer").removeChild(document.getElementById("activity"+activityIndex));
+function removeActivity(index) {
+    document.getElementById('sequenceContainer').removeChild(document.getElementById('activity' + index));
+    state.eventSequence.splice(index, 1);
 }
 
+function manageTime(index, operator) {
+    if (operator === '+') {
+        state.eventSequence[index].duration++;
+    } else if (operator === '-') {
+        state.eventSequence[index].duration--;
+        if (state.eventSequence[index].duration < 0) {
+            state.eventSequence[index].duration = 0;
+        }
+    }
+    document.getElementById('activityDuration' + index).innerText = state.eventSequence[index].duration;
+}
 
 function createActivityElement(index, activity) {
     let activityEl = document.createElement('div');
     activityEl.id = "activity"+index;
-    activityEl.innerHTML =
-        activity.name + ' for ' +
-        '<span id="activityDuration'+index+'">'+activity.duration+'</span>' + ' hours ' +
-        '<button onclick="manageTime('+index+', \'-\')"> - </button>' +
-        '<button onclick="manageTime('+index+', \'+\')"> + </button>' +
+    activityEl.className = "activity";
+    
+    let markerEl = document.createElement('div');
+    markerEl.id = "marker"+index;   // Re-add this line
+    markerEl.className = "marker";
+    markerEl.style.backgroundColor = 'transparent';
+
+    activityEl.innerHTML = 
+        activity.name + ' for ' + 
+        '<span id="activityDuration'+index+'">'+activity.duration+'</span>' + ' hours '+
+        '<button onclick="manageTime('+index+', \'-\')"> - </button>'+
+        '<button onclick="manageTime('+index+', \'+\')"> + </button>'+
         '<button onclick="removeActivity('+index+')"> X </button>';
+
+    activityEl.prepend(markerEl);
     return activityEl;
-}
+};
 
-
-function updateActivityDuration(activityIndex, newDuration) {
-    document.getElementById('activityDuration'+activityIndex).innerText = newDuration;
-}
-
-function manageTime(activityIndex, operator){
-    if(operator === "+") {
-        state.eventSequence[activityIndex].duration++;
-    } else if(operator === "-") {
-        state.eventSequence[activityIndex].duration--;
+function markCurrentActivity() {
+    // Remove the marker from the previous activity
+    if(state.currentActivityIndex > 0) {
+        document.getElementById('marker'+(state.currentActivityIndex-1)).style.backgroundColor = "red";
     }
-    updateActivityDuration(activityIndex, state.eventSequence[activityIndex].duration);
+
+    // Mark the current activity
+    document.getElementById('marker'+state.currentActivityIndex).style.backgroundColor = "green";
 }
 
 function getAndUpdateCurrentActivity() {
     if(state.energy <= 0){
         ranOutOfStamina();
     }
-
+    
     if(state.eventSequence[state.currentActivityIndex].duration === 0) {
         incrementDay();
         document.getElementById('currentEvent').innerText = state.eventSequence[state.currentActivityIndex].name;
+        markCurrentActivity();
     }
 
     manageEnergy(state.eventSequence[state.currentActivityIndex]);
@@ -98,42 +115,26 @@ function getAndUpdateCurrentActivity() {
 function gameLoop() {
     incrementHour();
     getAndUpdateCurrentActivity();
+    markCurrentActivity();
 }
 
-let isClickedOnce = false;
-let currentEvent = '';
+window.addEventListener('DOMContentLoaded', function(){
+    let restEventButton = document.createElement('button');
+    restEventButton.innerText = 'Rest';
+    restEventButton.addEventListener('click', function(){
+        addActivity({name: 'rest', duration: 1});
+    });
+    document.getElementById('eventList').appendChild(restEventButton);
 
-window.addEvent = function(event) {
- let eventListItem = document.createElement('li');
- let eventButton = document.createElement('button');
- eventButton.innerHTML = event.name;
-
- eventButton.addEventListener('click', function(){
-     if(currentEvent !== event.name){
-         isClickedOnce = false;
-         document.getElementById('eventDescContainer').innerText = event.description;
-         currentEvent = event.name;
-     } else{
-        if(!isClickedOnce){
-         isClickedOnce = true;
-         }
-         else{
-         addActivity({name: event.name, duration: 1});
-         isClickedOnce = false;
-        }
-      
-     }
- });
-    
- eventListItem.appendChild(eventButton);
- document.getElementById('eventList').appendChild(eventListItem); 
-}
-
-window.addEventListener('load', function(){
-    addEvent({name: 'rest', description: 'Rest and regain energy'});
-    addEvent({name: 'look around', description: 'Explore the surroundings'});
+    let lookAroundEventButton = document.createElement('button');
+    lookAroundEventButton.innerText = 'Look Around';
+    lookAroundEventButton.addEventListener('click', function(){
+        addActivity({name: 'look around', duration: 1});
+    });
+    document.getElementById('eventList').appendChild(lookAroundEventButton);
 });
 
+// Start the game
 let loop = setInterval(function() {
     gameLoop();
     activityIndex = state.currentActivityIndex;

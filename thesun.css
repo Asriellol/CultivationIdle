@@ -60,3 +60,16 @@ body {
     padding: 0.5em;
     border-radius: 8px;
 }
+
+#sequenceContainer .activity {
+    display: flex;
+    align-items: center;
+}
+
+.marker {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #f00;  /* Change this to your preferred color */
+    margin-right: 10px;
+}
