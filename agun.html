@@ -1,19 +1,31 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8"> 
-        <title>The Wuxia/XianXia Game</title>
-        <link rel="stylesheet" type="text/css" href="thesun.css">
-    </head>
-    <body>
-    
-        <h1>Welcome to the Wuxia/XianXia World!</h1>
+<div id="sequence">
+    <h2>Day: <span id="dayCount">1</span></h2>
+    <h2>Hour: <span id="hourCount">0</span></h2>
 
-        <div id="gameContainer">
+    <div id="currentEvent">Rest</div>
+    <button id="minusButton" onclick="manageTime('-')">-</button>
+    <button id="plusButton" onclick="manageTime('+')">+</button>
 
-        </div>
-        
-        <script src="thousandlion.js"></script>
+    <div id="energy">
+        Energy: <span id="energyCount">100</span>
+    </div>
+</div>
+<div id="sequenceContainer"></div>
+```
 
-    </body>
-</html>
+We need to style it with `thesun.css`.
+
+```css
+#sequence {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 25%;
+    min-height: 100%;
+    background-color: rgba(0,0,0,0.4);
+    color: #fff;
+    padding: 1em; 
+}
+#sequenceContainer {
+    margin-top: 1em;
+}
