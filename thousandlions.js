@@ -100,25 +100,33 @@ function gameLoop() {
     getAndUpdateCurrentActivity();
 }
 
+let isClickedOnce = false;
+let currentEvent = '';
+
 window.addEvent = function(event) {
-    let eventListItem = document.createElement('li');
-    let eventButton = document.createElement('button');
-    eventButton.innerHTML = event.name;
-    
-    eventButton.countClicks = 0;
-    
-    eventButton.addEventListener('click', function(){ 
-        if(eventButton.countClicks === 0) {
-            document.getElementById('eventDescContainer').innerText = event.description;
-            eventButton.countClicks++;
-        } else {
-            addActivity({name: event.name, duration: 1}); 
-            eventButton.countClicks = 0;
+ let eventListItem = document.createElement('li');
+ let eventButton = document.createElement('button');
+ eventButton.innerHTML = event.name;
+
+ eventButton.addEventListener('click', function(){
+     if(currentEvent !== event.name){
+         isClickedOnce = false;
+         document.getElementById('eventDescContainer').innerText = event.description;
+         currentEvent = event.name;
+     } else{
+        if(!isClickedOnce){
+         isClickedOnce = true;
+         }
+         else{
+         addActivity({name: event.name, duration: 1});
+         isClickedOnce = false;
         }
-    });
+      
+     }
+ });
     
-    eventListItem.appendChild(eventButton);
-    document.getElementById('eventList').appendChild(eventListItem); 
+ eventListItem.appendChild(eventButton);
+ document.getElementById('eventList').appendChild(eventListItem); 
 }
 
 window.addEventListener('load', function(){
