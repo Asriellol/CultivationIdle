@@ -101,15 +101,29 @@ function gameLoop() {
 }
 
 window.addEvent = function(event) {
+    let eventListItem = document.createElement('li');
     let eventButton = document.createElement('button');
     eventButton.innerHTML = event.name;
-    eventButton.addEventListener('click', function(){ addActivity({name: event.name, duration: 1}); });
-    document.getElementById('eventsContainer').appendChild(eventButton); // Changed from 'events' to 'eventsContainer'
+    
+    eventButton.countClicks = 0;
+    
+    eventButton.addEventListener('click', function(){ 
+        if(eventButton.countClicks === 0) {
+            document.getElementById('eventDescContainer').innerText = event.description;
+            eventButton.countClicks++;
+        } else {
+            addActivity({name: event.name, duration: 1}); 
+            eventButton.countClicks = 0;
+        }
+    });
+    
+    eventListItem.appendChild(eventButton);
+    document.getElementById('eventList').appendChild(eventListItem); 
 }
 
 window.addEventListener('load', function(){
-    addEvent({name: 'rest'});
-    addEvent({name: 'look around'});
+    addEvent({name: 'rest', description: 'Rest and regain energy'});
+    addEvent({name: 'look around', description: 'Explore the surroundings'});
 });
 
 let loop = setInterval(function() {
